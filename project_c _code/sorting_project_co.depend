@@ -1,0 +1,36 @@
+# depslib dependency file v1.0
+1613070571 source:c:\users\fatma\onedrive\documents\projects\sorting_project_co\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<conio.h>
+	<string.h>
+
+1613094603 source:c:\users\fatma\downloads\sorting_project_co\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<conio.h>
+	<string.h>
+
+1613095390 source:c:\users\dalia\downloads\sorting_project_co (4)\sorting_project_co\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<conio.h>
+	<string.h>
+
+1613101282 source:c:\users\fatma\onedrive\desktop\c\sorting_project_co (4)\sorting_project_co\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<conio.h>
+	<string.h>
+
+1613101282 source:e:\__macosx\sorting_project_co (4)\sorting_project_co\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<conio.h>
+	<string.h>
+
