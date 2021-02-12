@@ -1,6 +1,7 @@
 .data
 
 array: .space 1000                                           #reserve 25 words in memory for array
+arr:.space 1000
 size: .asciiz "Please enter the size of the array: "        # the message for asking the user to enter the size of the array
 enter_char: .asciiz "\nEnter character: "                     # the message displayed when asking the user to enter a character for the array
 final: .asciiz "\nThe Sorted array using Bubble Sort is: "  # printing the sorted array after sorting
@@ -279,13 +280,17 @@ jr $ra                                                     #return to the last p
   move $a0, $t3
   syscall
   
-  j binarySearch
+
+li $v0,10                                                   # call service 10 to exit the program
+syscall   
   notFound:
   
  li $v0, 4
   la $a0, notfound_mess
   syscall
-  j binarySearch
+
+li $v0,10                                                   # call service 10 to exit the program
+syscall   
 
   
 
@@ -304,6 +309,7 @@ merge:
 	la  $a0, Bracket	# Prints the closing bracket for the array
 	li  $v0, 4		# MIPS call for printing prompts
 	syscall
+
 	li  $v0, 10		# Done!
 	syscall
 	
@@ -662,7 +668,7 @@ MERGEChar:
 	syscall
 	#input string
 	li $v0, 8
-	la $a0, array
+	la $a0, arr
 	li $a1, 1000
 	syscall
 	
@@ -672,6 +678,7 @@ MERGEChar:
 	whileChar:
 	lb $t6, 0($a1)
 	beqz $t6, exitChar
+	lb $t4,arr($t0)
 	addi $t0, $t0, 1
 	addi $a1, $a1, 1
 	
@@ -683,7 +690,7 @@ MERGEChar:
 	la $a0, given
 	syscall
 	li $v0, 4
-	la $a0, array
+	la $a0, arr
 	syscall
 	#print new line
 	li $v0, 4
@@ -709,9 +716,22 @@ MERGEChar:
 	la $a0, sorted
 	syscall
 	li $v0, 4
-	la $a0, array
+	la $a0, arr
 	syscall
-	jal binarySearchChar
+	lw $t0, arraySize
+	addi $t1,$zero,0
+	la $a0,array 
+	#la $a1, ($a0)
+	#printing array (arr) in array (array)
+	copyingArray:
+	slt $t5, $t1,$t0
+	beqz $t5,binarySearchChar
+	lb $t3,arr($t1)
+	sw $t3, 0($a0)
+	addi $a0 ,$a0 ,4
+	addi $t1, $t1,1
+	jal copyingArray
+	#jal binarySearchChar
 	#this in dicates the end of the program
 	li $v0, 10
 	syscall 
@@ -768,7 +788,7 @@ MERGEChar:
 			      	slt $t7, $s3,$t5 #i<S1
 				beqz $t7, afterleftarraycopyChar
 				add $t3, $a1,$s3 #index for array (l+i)
-				lb $t4, array($t3)#loading the value at index (l+i) in $t4
+				lb $t4, arr($t3)#loading the value at index (l+i) in $t4
 				sb $t4, leftarray($s3)#L[i]=arr[l+i]
 				addi $s3,$s3,1#i=i+1
 				j leftarraycopyChar
@@ -782,7 +802,7 @@ MERGEChar:
 				beqz $t7,afterRightarraycopyChar
 				add $t3, $a0,$s4 #index for array (m+j)
 				addi $t3,$t3,1   #here index will be (m+j+1)
-				lb $t4, array($t3)#loading the value at index (m+j+1) in $t4
+				lb $t4, arr($t3)#loading the value at index (m+j+1) in $t4
 				sb $t4, rightarray($s4)#R[j]=arr[m+j+1]
 				addi $s4,$s4,1# increment j by 1
 				j rightarraycopyChar
@@ -800,19 +820,19 @@ MERGEChar:
 			lb $t4,rightarray($s4)#putR[j]in $t4
 			slt $t7,$t3,$t4 #if l[i]< R[j]
 			beqz $t7, ifequalChar
-			sb $t3, array($s5) #equivalent to arr[k]=L[i]
+			sb $t3, arr($s5) #equivalent to arr[k]=L[i]
 			addi $s3,$s3,1 #increment i by 1
 					
 			addi $s5,$s5,1 #increment k by 1
 			j comparingChar
 			ifequalChar:
 				bne $t3,$t4,elseChar #if L[i} not equal to R[j] go to else
-				sb $t3, array($s5) #equivalent to arr[k]=L[i]
+				sb $t3, arr($s5) #equivalent to arr[k]=L[i]
 				addi $s3,$s3,1 #increment i by 1
 				addi $s5,$s5,1 #increment k by 1
 				j comparingChar
 			elseChar:
-				sb $t4,array($s5) #equivalent to arr[k]=R[j]
+				sb $t4,arr($s5) #equivalent to arr[k]=R[j]
 				addi $s4,$s4,1 #increment j by 1		
 				addi $s5,$s5,1 #increment k by 1
 				j comparingChar
@@ -820,7 +840,7 @@ MERGEChar:
 			slt $t7,$s3, $t5# if i < S1
 			beqz $t7, secondwhileChar #if not go to second loop
 			lb $t3, leftarray($s3)#put L[i] in $t3
-			sb $t3, array($s5)#equivalent to arr[k]=L[i]
+			sb $t3, arr($s5)#equivalent to arr[k]=L[i]
 			addi $s3,$s3,1 #increment i by 1
 			addi $s5,$s5,1#increment k by 1
 			j endwhileChar
@@ -828,7 +848,7 @@ MERGEChar:
 				slt $t7, $s4,$t6 #if j< S2  
 				beqz $t7, endfunctionChar# if not go to end function
 				lb $t3 , rightarray($s4)#put R[j] in $t3
-				sb $t3, array($s5)#equivalent to arr[k]=R[j]
+				sb $t3, arr($s5)#equivalent to arr[k]=R[j]
 				addi $s4,$s4,1#increment j by1
 				addi $s5,$s5,1# increment k by 1
 				j secondwhileChar
@@ -1213,7 +1233,7 @@ PRINT_RETURNChar:
   li $v0, 1
   move $a0, $t3
   syscall
-  j binarySearchChar
+  
   # Call to end program
     addi $v0, $zero, 10         # system call for exit
     syscall
@@ -1225,7 +1245,7 @@ PRINT_RETURNChar:
  li $v0, 4
   la $a0, notfound_mess
   syscall
-   j binarySearchChar
+  
  # Call to end program
     addi $v0, $zero, 10         # system call for exit
     syscall
@@ -1242,7 +1262,9 @@ jr $ra                                                     #return to the last p
 
 	
 Exit:
-j binarySearch
+	j binarySearch
+li $v0,10                                                   # call service 10 to exit the program
+syscall   
 	jr $ra			# jump to the address in $ra; Go back to main
 	
 
