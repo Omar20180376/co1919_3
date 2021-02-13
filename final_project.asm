@@ -254,22 +254,22 @@ jr $ra                                                     #return to the last p
     addi $t4,$zero,0 
   loop:
   add $t3,$t2,$t1
-  div $t3,$t3,2
+  div $t3,$t3,2 # mid calcu
   
   mul $t4,$t3,4
  
   lw $t5,array($t4)
-  beq $t5,$t0,Found
+  beq $t5,$t0,Found # if mid == search
   slt $t6,$t5,$t0
-  beq $t6,1,greatleft
-  add $t1,$t1,-1
+  beq $t6,1,greatleft # if mid < search
+  add $t1,$t1,-1 # decrease right
    
    j fi
   greatleft:
-  add $t2,$t2,1
+  add $t2,$t2,1# increase left
   fi:
-  slt $s1,$t1,$t2
-  beq $s1,1,notFound
+  slt $s1,$t1,$t2  # if Right < left
+  beq $s1,1,notFound  # not found
   j loop
   Found:
   li $v0, 4
